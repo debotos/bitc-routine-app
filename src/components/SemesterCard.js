@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 import { Card, COLOR, ListItem, Divider } from 'react-native-material-ui';
-import {
-  Text,
-  View,
-  StyleSheet,
-  WebView,
-  BottomNavigation
-} from 'react-native';
+import { View, StyleSheet, WebView } from 'react-native';
 
 import DaysNav from './DaysNav';
 import { getToday } from './DaysNav';
@@ -76,3 +70,10 @@ const styles = StyleSheet.create({
     paddingTop: 0
   }
 });
+
+//style={{
+//  ...Platform.select({
+//   ios: { fontFamily: 'Arial' },
+//  android: { fontFamily: 'Roboto' }
+//})
+//}}

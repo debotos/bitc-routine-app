@@ -1,17 +1,17 @@
 import React from 'react';
+import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
 import {
-  ScrollView,
-  ActivityIndicator,
-  Text,
-  View,
-  StyleSheet,
-  Platform
-} from 'react-native';
-import { COLOR, ThemeContext, getTheme } from 'react-native-material-ui';
+  Toolbar,
+  COLOR,
+  ThemeContext,
+  getTheme
+} from 'react-native-material-ui';
 
 import AppBar from './components/AppBar';
 import BottomNav from './components/BottomNav';
-import SemesterCard from './components/SemesterCard';
+import Routine from './screens/Routine';
+import About from './screens/About';
+import Exam from './screens/Exam';
 
 const uiTheme = {
   palette: {
@@ -25,7 +25,6 @@ const uiTheme = {
 };
 
 const API_ENDPOINT = 'https://bitc-routine-dev.herokuapp.com/api/client';
-
 class App extends React.Component {
   componentDidMount() {
     return fetch(API_ENDPOINT)
@@ -36,35 +35,50 @@ class App extends React.Component {
             isLoading: false,
             dataSource: responseJson
           },
-          function() {}
+          function() {
+            console.log('Data Fetched Successfully!');
+          }
         );
       })
       .catch(error => {
         console.error(error);
+        alert('Network Connection Failed');
       });
   }
+  onPageChange = page => this.setState({ page });
+  search = search => this.setState({ search });
+
+  filterBySearchInput = (searchText, routineData) => {
+    let semestersNameArray = [];
+    for (let key in routineData) {
+      semestersNameArray.push(key);
+    }
+
+    let matchedSemesters = semestersNameArray.filter(singleSemester => {
+      let textMatch = singleSemester
+        .toUpperCase()
+        .includes(searchText.toUpperCase());
+      return textMatch;
+    });
+
+    let result = {};
+    matchedSemesters.forEach(singleItem => {
+      result[singleItem] = routineData[singleItem];
+    });
+
+    return result;
+  };
   constructor(props) {
     super(props);
-    this.state = { isLoading: true, dataSource: null };
+    this.state = {
+      isLoading: true,
+      dataSource: null,
+      page: 'routine',
+      search: ''
+    };
   }
 
-  renderAllSemester() {
-    const routine = this.state.dataSource;
-    const cards = [];
-    for (let key in routine) {
-      cards.push(
-        <SemesterCard
-          semester={key}
-          data={routine[key]} // data is an obj {sat:[], sun:[]}
-          key={'semester_' + key}
-        />
-      );
-    }
-    return cards;
-  }
   render() {
-    let routine = this.state.dataSource;
-
     if (this.state.isLoading) {
       return (
         <View
@@ -76,30 +90,31 @@ class App extends React.Component {
     }
 
     return (
-      <ThemeContext.Provider
-        value={getTheme(uiTheme)}
-        style={{
-          ...Platform.select({
-            ios: { fontFamily: 'Arial' },
-            android: { fontFamily: 'Roboto' }
-          })
-        }}
-      >
-        <AppBar />
-        <ScrollView>{this.renderAllSemester()}</ScrollView>
-        <BottomNav />
+      <ThemeContext.Provider value={getTheme(uiTheme)}>
+        {this.state.page === 'routine' && <AppBar search={this.search} />}
+        {this.state.page === 'routine' && (
+          <Routine
+            dataSource={this.filterBySearchInput(
+              this.state.search,
+              this.state.dataSource.routine
+            )}
+          />
+        )}
+        {this.state.page === 'exam' && <Toolbar centerElement="Exam Date" />}
+        {this.state.page === 'exam' && (
+          <Exam dataSource={this.state.dataSource.exams} />
+        )}
+        {this.state.page === 'about' && <Toolbar centerElement="About" />}
+        {this.state.page === 'about' && <About />}
+
+        <View>
+          <BottomNav onPageChange={this.onPageChange} />
+        </View>
       </ThemeContext.Provider>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  }
-});
+// style={{ marginTop: -100 }}
+const styles = StyleSheet.create({});
 
 export default App;

@@ -3,34 +3,37 @@ import { BottomNavigation } from 'react-native-material-ui';
 
 export default class BottomNav extends Component {
   state = {
-    active: 'today'
+    active: 'routine'
   };
   render() {
     return (
       <BottomNavigation active={this.state.active} hidden={false}>
         <BottomNavigation.Action
-          key="today"
-          icon="today"
-          label="Today"
-          onPress={() => this.setState({ active: 'today' })}
-        />
-        <BottomNavigation.Action
-          key="people"
-          icon="people"
-          label="People"
-          onPress={() => this.setState({ active: 'people' })}
-        />
-        <BottomNavigation.Action
-          key="bookmark-border"
+          key="routine"
           icon="bookmark-border"
-          label="Bookmark"
-          onPress={() => this.setState({ active: 'bookmark-border' })}
+          label="Routine"
+          onPress={() => {
+            this.setState({ active: 'routine' });
+            this.props.onPageChange('routine');
+          }}
         />
         <BottomNavigation.Action
-          key="settings"
-          icon="settings"
-          label="Settings"
-          onPress={() => this.setState({ active: 'settings' })}
+          key="exam"
+          icon="book"
+          label="Exam"
+          onPress={() => {
+            this.setState({ active: 'exam' });
+            this.props.onPageChange('exam');
+          }}
+        />
+        <BottomNavigation.Action
+          key="about"
+          icon="info"
+          label="About"
+          onPress={() => {
+            this.setState({ active: 'about' });
+            this.props.onPageChange('about');
+          }}
         />
       </BottomNavigation>
     );

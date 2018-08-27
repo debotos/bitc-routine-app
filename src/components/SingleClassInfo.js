@@ -28,7 +28,7 @@ class SingleClassInfo extends Component {
     let { classes, day } = this.props;
     return (
       <View>
-        <View style={{ display: 'flex', alignItems: 'center' }}>
+        <View style={{ display: 'flex', alignItems: 'center', marginTop: 3 }}>
           <Text style={styles.day}>{days[day]}</Text>
         </View>
         {this.renderAllSubjects()}
