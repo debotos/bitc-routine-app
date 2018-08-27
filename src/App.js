@@ -15,8 +15,7 @@ import SemesterCard from './components/SemesterCard';
 
 const uiTheme = {
   palette: {
-    primaryColor: COLOR.green500,
-    accentColor: COLOR.pink500
+    primaryColor: COLOR.blue500
   },
   toolbar: {
     container: {
@@ -53,7 +52,13 @@ class App extends React.Component {
     const routine = this.state.dataSource;
     const cards = [];
     for (let key in routine) {
-      cards.push(<SemesterCard key={'semester_' + key} />);
+      cards.push(
+        <SemesterCard
+          semester={key}
+          data={routine[key]} // data is an obj {sat:[], sun:[]}
+          key={'semester_' + key}
+        />
+      );
     }
     return cards;
   }

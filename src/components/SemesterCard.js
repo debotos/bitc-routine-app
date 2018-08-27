@@ -1,25 +1,67 @@
 import React, { Component } from 'react';
-import { Card, ListItem } from 'react-native-material-ui';
-import { Text, View, StyleSheet } from 'react-native';
+import { Card, COLOR, ListItem, Divider } from 'react-native-material-ui';
+import {
+  Text,
+  View,
+  StyleSheet,
+  WebView,
+  BottomNavigation
+} from 'react-native';
+
+import DaysNav from './DaysNav';
+import { getToday } from './DaysNav';
+import SingleClassInfo from './SingleClassInfo';
 
 export default class SemesterCard extends Component {
+  state = {
+    selectedDay: getToday()
+  };
+
+  dayChanged = selectedDay => this.setState({ selectedDay });
+
+  renderSingleDayData(day) {
+    const days = this.props.data;
+    return <SingleClassInfo day={day} classes={days[day]} />;
+  }
+
+  /* 
+  renderAllDays() {
+    const days = this.props.data;
+    const cards = [];
+    for (let key in days) {
+      cards.push(
+        <SingleClassInfo
+          day={key}
+          classes={days[key]} // data is an obj {sat:[], sun:[]}
+          key={key + 'day'}
+        />
+      );
+    }
+    return cards;
+  }
+  */
+
   render() {
+    let { semester } = this.props;
+    let { selectedDay } = this.state;
     return (
       <View>
         <Card>
           <ListItem
-            centerElement={{
-              primaryText: 'Mike Wiliams'
-              //secondaryText: '4 weeks ago'
-            }}
+            centerElement={
+              <WebView
+                source={{
+                  html: `<div style="margin-left: -5px;"><span style="color: ${
+                    COLOR.green500
+                  };"><strong>${semester}</strong></span></div>`
+                }}
+              />
+            }
           />
+          <DaysNav dayChanged={this.dayChanged} />
+          <Divider />
           <View style={styles.textContainer}>
-            <Text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
-            </Text>
+            {this.renderSingleDayData(selectedDay)}
           </View>
         </Card>
       </View>
@@ -30,6 +72,7 @@ export default class SemesterCard extends Component {
 const styles = StyleSheet.create({
   textContainer: {
     paddingHorizontal: 16,
-    paddingBottom: 16
+    paddingBottom: 16,
+    paddingTop: 0
   }
 });
