@@ -6,6 +6,7 @@ import {
   ThemeContext,
   getTheme
 } from 'react-native-material-ui';
+import store from 'react-native-simple-store';
 
 import AppBar from './components/AppBar';
 import BottomNav from './components/BottomNav';
@@ -36,13 +37,38 @@ class App extends React.Component {
             dataSource: responseJson
           },
           function() {
-            console.log('Data Fetched Successfully!');
+            console.log('Data Fetched Successfully & saving for offline!');
+            store.update('APP_DATA', responseJson);
           }
         );
       })
       .catch(error => {
-        console.error(error);
-        alert('Network Connection Failed');
+        console.log('Something bad happen at API call =>', error);
+
+        store.get('APP_DATA').then(offline_res => {
+          // console.log('Previous APP_DATA -> ', offline_res);
+          if (offline_res) {
+            alert(
+              `Warning! No Internet Connection! You aren't going to get updated Routine!`
+            );
+            this.setState(
+              {
+                isLoading: false,
+                dataSource: offline_res
+              },
+              function() {
+                console.log('Application using offline Data');
+              }
+            );
+          } else {
+            // It is the first time user starting the app
+            alert(
+              'No internet connection found! First time you have to connect to internet!'
+            );
+          }
+        });
+        if (condition) {
+        }
       });
   }
   onPageChange = page => this.setState({ page });
@@ -102,7 +128,11 @@ class App extends React.Component {
         )}
         {this.state.page === 'exam' && <Toolbar centerElement="Exam Date" />}
         {this.state.page === 'exam' && (
-          <Exam dataSource={this.state.dataSource.exams} />
+          <Exam
+            dataSource={
+              this.state.dataSource.exams ? this.state.dataSource.exams : []
+            }
+          />
         )}
         {this.state.page === 'about' && <Toolbar centerElement="About" />}
         {this.state.page === 'about' && <About />}

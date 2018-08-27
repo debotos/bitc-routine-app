@@ -28,8 +28,7 @@ export default class AppBar extends React.Component {
           },
           onSearchPressed: () => {
             store.get('search').then(res => {
-              console.log('Previous Search -> ', res.text);
-              if (res.text) {
+              if (res && res.text) {
                 this.onChangeText(res.text);
               }
             });
